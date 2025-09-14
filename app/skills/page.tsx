@@ -13,13 +13,13 @@ export default function Skills() {
     {
       name: "NestJS",
       icon: "",
-      experience: "4+ yrs | 10+ projects",
+      experience: "4+ yrs | 4+ projects",
       color: "from-red-400 to-red-600",
     },
     {
       name: "TypeScript",
       icon: "",
-      experience: "5+ yrs | 12+ projects",
+      experience: "5+ yrs | 4+ projects",
       color: "from-blue-400 to-blue-600",
     },
     {
@@ -37,7 +37,7 @@ export default function Skills() {
     {
       name: "MongoDB",
       icon: "",
-      experience: "5+ yrs | NoSQL Systems",
+      experience: "4+ yrs | NoSQL Systems",
       color: "from-emerald-400 to-emerald-600",
     },
     {
@@ -50,6 +50,18 @@ export default function Skills() {
       name: "Angular",
       icon: "", // ❌ No icon → fallback
       experience: "3+ yrs | Frontend Projects",
+      color: "from-red-400 to-pink-600",
+    },
+    {
+      name: "React.js",
+      icon: "", // ❌ No icon → fallback
+      experience: "2+ yrs | Frontend Projects",
+      color: "from-red-400 to-pink-600",
+    },
+    {
+      name: "Next.js",
+      icon: "", // ❌ No icon → fallback
+      experience: "2+ yrs | Frontend Projects",
       color: "from-red-400 to-pink-600",
     },
   ];

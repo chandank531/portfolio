@@ -23,8 +23,8 @@ export default function Contact() {
 
           <div className="mt-8 space-y-4 text-gray-700 dark:text-gray-300">
             <p>Email: <a href="mailto:chandank531@gmail.com" className="text-blue-600 dark:text-blue-400 underline">chandank531@gmail.com</a></p>
-            <p>Phone: <a href="tel:+919876543210" className="text-blue-600 dark:text-blue-400 underline">+91 98765 43210</a></p>
-            <p>Location: Pune, India</p>
+            <p>Phone: <a href="tel:+919686711048" className="text-blue-600 dark:text-blue-400 underline">+91 96867 11048</a></p>
+            <p>Location: Patna, India</p>
           </div>
         </div>
 
