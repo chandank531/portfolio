@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "../../../lib/db";
 
+// ✅ Fix: don't overconstrain params typing
 export async function GET(
   req: NextRequest,
-  { params }: { params: { page: string } }
+  context: { params: { page: string } } // keep it simple
 ) {
-  const page = params.page;
+  const page = context.params.page;
 
   try {
     const result = await pool.query(
@@ -33,6 +34,9 @@ export async function GET(
     return NextResponse.json({ views });
   } catch (error) {
     console.error("Page Views API Error:", error);
-    return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch views" },
+      { status: 500 }
+    );
   }
 }
