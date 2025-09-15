@@ -1,42 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
-import pool from "../../../lib/db";
+import { NextResponse } from "next/server";
+import clientPromise from "../../../lib/mongodb";
 
-// ✅ Fix: don't overconstrain params typing
-export async function GET(
-  req: NextRequest,
-  context: { params: { page: string } } // keep it simple
-) {
-  const page = context.params.page;
+export async function GET(req: Request, { params }: { params: { page: string } }) {
+  const page = params.page;
 
   try {
-    const result = await pool.query(
-      `UPDATE page_views 
-       SET views = views + 1, updated_at = NOW() 
-       WHERE page_name = $1 
-       RETURNING views`,
-      [page]
+    const client = await clientPromise;
+    const db = client.db("portfolio"); // use your DB name
+    const collection = db.collection("page_views");
+
+    const result = await collection.findOneAndUpdate(
+      { page_name: page },
+      { $inc: { views: 1 }, $set: { updated_at: new Date() } },
+      { upsert: true, returnDocument: "after" }
     );
 
-    let views: number;
-
-    if (result.rowCount === 0) {
-      const insert = await pool.query(
-        `INSERT INTO page_views (page_name, views) 
-         VALUES ($1, 1) 
-         RETURNING views`,
-        [page]
-      );
-      views = insert.rows[0].views;
-    } else {
-      views = result.rows[0].views;
-    }
-
-    return NextResponse.json({ views });
+    return NextResponse.json({ views: result?.value?.views ?? 1 });
   } catch (error) {
     console.error("Page Views API Error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch views" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
   }
 }

@@ -1,22 +1,34 @@
 import { NextResponse } from "next/server";
-import pool from "../../lib/db";
+import clientPromise from "../../lib/mongodb";
 
 export async function POST(req: Request) {
   try {
     const { name, email, message } = await req.json();
 
     if (!name || !email || !message) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "All fields are required" },
+        { status: 400 }
+      );
     }
 
-    const result = await pool.query(
-      `INSERT INTO contact_messages (name, email, message) VALUES ($1, $2, $3) RETURNING id`,
-      [name, email, message]
-    );
+    const client = await clientPromise;
+    const db = client.db("portfolio"); // replace with your DB name
+    const collection = db.collection("contact_messages");
 
-    return NextResponse.json({ success: true, id: result.rows[0].id });
+    const result = await collection.insertOne({
+      name,
+      email,
+      message,
+      created_at: new Date(),
+    });
+
+    return NextResponse.json({ success: true, id: result.insertedId });
   } catch (error) {
     console.error("Contact API Error:", error);
-    return NextResponse.json({ error: "Failed to save message" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save message" },
+      { status: 500 }
+    );
   }
 }
