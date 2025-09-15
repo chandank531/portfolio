@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import pool from "../../lib/db"; 
+import pool from "../../../lib/db"; // adjust path if needed
 
-export async function GET() {
-  const page = "contact";
+// GET /api/views/[page]
+export async function GET(
+  req: Request,
+  { params }: { params: { page: string } }
+) {
+  const page = params.page;
 
   try {
     const result = await pool.query(
@@ -24,7 +28,7 @@ export async function GET() {
 
     return NextResponse.json({ views });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating views:", error);
     return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
   }
 }
