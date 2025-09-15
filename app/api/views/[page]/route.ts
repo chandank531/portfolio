@@ -1,12 +1,8 @@
-// app/api/views/[page]/route.ts
 import { NextResponse } from "next/server";
-import pool from "../../../lib/db"; // adjust relative path
+import pool from "../../../lib/db";
 
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ page: string }> }
-) {
-  const { page } = await context.params; // 🔹 await the params
+export async function GET(req: Request, { params }: { params: { page: string } }) {
+  const page = params.page;
 
   try {
     const result = await pool.query(
@@ -28,7 +24,7 @@ export async function GET(
 
     return NextResponse.json({ views });
   } catch (error) {
-    console.error(error);
+    console.error("Page Views API Error:", error);
     return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
   }
 }

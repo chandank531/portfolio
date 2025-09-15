@@ -6,30 +6,17 @@ export async function POST(req: Request) {
     const { name, email, message } = await req.json();
 
     if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
-    const query = `
-      INSERT INTO contacts (name, email, message)
-      VALUES ($1, $2, $3)
-      RETURNING *
-    `;
-
-    const values = [name, email, message];
-    const { rows } = await pool.query(query, values);
-
-    return NextResponse.json(
-      { message: "Message stored successfully!", contact: rows[0] },
-      { status: 201 }
+    const result = await pool.query(
+      `INSERT INTO contact_messages (name, email, message) VALUES ($1, $2, $3) RETURNING id`,
+      [name, email, message]
     );
+
+    return NextResponse.json({ success: true, id: result.rows[0].id });
   } catch (error) {
-    console.error("Error storing message:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error("Contact API Error:", error);
+    return NextResponse.json({ error: "Failed to save message" }, { status: 500 });
   }
 }
