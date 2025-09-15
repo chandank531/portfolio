@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "../../../lib/mongodb";
 
-export async function GET(req: Request, { params }: { params: { page: string } }) {
-  const page = params.page;
-
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ page: string }> } // Next.js 15 requires params as Promise
+) {
   try {
+    const { page } = await context.params; // await the promise
     const client = await clientPromise;
-    const db = client.db("portfolio"); // use your DB name
+    const db = client.db("portfolio");
     const collection = db.collection("page_views");
 
     const result = await collection.findOneAndUpdate(
