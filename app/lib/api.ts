@@ -9,7 +9,8 @@ export async function postContact(data: { name: string; email: string; message: 
   return res.json();
 }
 
-export async function getPageViews(page: string) {
-  const res = await fetch(`${API_BASE}/api/views/${page}`);
+export async function getGlobalViews() {
+  const res = await fetch("/api/views", { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch global views");
   return res.json();
 }
