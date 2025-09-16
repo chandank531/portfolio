@@ -5,21 +5,31 @@ export async function GET(req: NextRequest) {
   try {
     const client = await clientPromise;
     const db = client.db("portfolio");
-    const collection = db.collection("page_views");
 
-    // Increment global views
-    const result = await collection.findOneAndUpdate(
-      { page_name: "global" },
-      { $inc: { views: 1 }, $set: { updated_at: new Date() } },
-      { upsert: true, returnDocument: "after" }
+    const visitors = db.collection("visitors");
+
+    // get IP (works on Vercel/Next.js edge too)
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0] ||
+      "unknown";
+
+    if (ip === "unknown") {
+      return NextResponse.json({ error: "Could not detect IP" }, { status: 400 });
+    }
+
+    // insert only if not exists (unique IP tracking)
+    await visitors.updateOne(
+      { ip },
+      { $setOnInsert: { ip, firstVisit: new Date() } },
+      { upsert: true }
     );
 
-    return NextResponse.json({ globalViews: result?.value?.views ?? 1 });
+    // count total unique IPs = total views
+    const totalViews = await visitors.countDocuments();
+
+    return NextResponse.json({ totalViews });
   } catch (error) {
-    console.error("Global Views API Error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch global views" },
-      { status: 500 }
-    );
+    console.error("Views API Error:", error);
+    return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
   }
 }

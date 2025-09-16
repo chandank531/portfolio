@@ -14,3 +14,4 @@ export async function getGlobalViews() {
   if (!res.ok) throw new Error("Failed to fetch global views");
   return res.json();
 }
+

@@ -53,7 +53,7 @@ export default function RootClient({ children }: { children: React.ReactNode }) 
     async function fetchViews() {
       try {
         const data = await getGlobalViews();
-        setGlobalViews(data.globalViews);
+        setGlobalViews(data.totalViews);
       } catch (err) {
         console.error("Failed to fetch views", err);
       }
